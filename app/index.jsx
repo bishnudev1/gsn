@@ -7,7 +7,7 @@ const SplashScreen = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push('/onboarding'); // Navigate to the onboarding screen after 3 seconds
+      router.push('/auth/login'); // Navigate to the onboarding screen after 3 seconds
     }, 2000);
 
     return () => clearTimeout(timer);

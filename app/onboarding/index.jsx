@@ -2,23 +2,32 @@ import React, { useRef } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import { Lato_700Bold } from '@expo-google-fonts/lato';
+import { useRouter } from 'expo-router';
+import { useFonts } from '@expo-google-fonts/lato';
+import AppLoading from 'expo-app-loading';
 
 const OnboardingPage = () => {
   const swiperRef = useRef(null); // Create a reference to the swiper
-  const navigation = useNavigation(); // Hook to handle navigation
+  const router = useRouter();
+
+  // Load fonts
+  const [fontsLoaded] = useFonts({
+    Lato_400Regular: require('@expo-google-fonts/lato/Lato_400Regular.ttf'),
+    Lato_700Bold: require('@expo-google-fonts/lato/Lato_700Bold.ttf'),
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
 
   // Function to handle next slide navigation
-  const goToNextSlide = (index) => {
-    console.log("Going to next slide...");
-    
+  const goToNextSlide = () => {
     swiperRef.current.scrollBy(1); // Move to the next slide
   };
 
   return (
     <Swiper
-      ref={swiperRef} // Assign the ref to the swiper
+      ref={swiperRef}
       style={styles.wrapper}
       showsButtons={false}
       activeDot={<View style={styles.activeDot} />}
@@ -28,20 +37,17 @@ const OnboardingPage = () => {
       {/* Page 1 */}
       <View style={styles.slide}>
         <Image source={require('../../assets/images/onboarding1.png')} style={styles.image1} />
-        <Text style={styles.title}>The best app to track athlete's activity</Text>
-        
+        <Text style={[styles.title, { fontFamily: 'Lato_700Bold' }]}>
+          The best app to track athlete's activity
+        </Text>
         <LinearGradient
           colors={['#006BE5', '#4A0AB4']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.button}
         >
-          <TouchableOpacity onPress={()=> {
-            console.log("Getting exited...");
-            
-            goToNextSlide();
-            }}>
-            <Text style={styles.buttonText}>Next</Text>
+          <TouchableOpacity onPress={goToNextSlide}>
+            <Text style={[styles.buttonText, { fontFamily: 'Lato_700Bold' }]}>Next</Text>
           </TouchableOpacity>
         </LinearGradient>
       </View>
@@ -49,15 +55,17 @@ const OnboardingPage = () => {
       {/* Page 2 */}
       <View style={styles.slide}>
         <Image source={require('../../assets/images/onboarding2.png')} style={styles.image2} />
-        <Text style={styles.title}>Get more experience with communities</Text>
+        <Text style={[styles.title, { fontFamily: 'Lato_700Bold' }]}>
+          Get more experience with communities
+        </Text>
         <LinearGradient
           colors={['#006BE5', '#4A0AB4']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.button}
         >
-          <TouchableOpacity onPress={() => goToNextSlide()}>
-            <Text style={styles.buttonText}>Next</Text>
+          <TouchableOpacity onPress={goToNextSlide}>
+            <Text style={[styles.buttonText, { fontFamily: 'Lato_700Bold' }]}>Next</Text>
           </TouchableOpacity>
         </LinearGradient>
       </View>
@@ -65,15 +73,17 @@ const OnboardingPage = () => {
       {/* Page 3 */}
       <View style={styles.slide}>
         <Image source={require('../../assets/images/onboarding3.png')} style={styles.image3} />
-        <Text style={styles.title2}>Connect with your wearable devices</Text>
+        <Text style={[styles.title2, { fontFamily: 'Lato_700Bold' }]}>
+          Connect with your wearable devices
+        </Text>
         <LinearGradient
           colors={['#006BE5', '#4A0AB4']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.button}
         >
-          <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-            <Text style={styles.buttonText}>Get Started</Text>
+          <TouchableOpacity onPress={() => router.push('/auth/register')}>
+            <Text style={[styles.buttonText, { fontFamily: 'Lato_700Bold' }]}>Get Started</Text>
           </TouchableOpacity>
         </LinearGradient>
       </View>
@@ -111,7 +121,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 40,
     textAlign: 'center',
-    fontFamily: 'Lato_700Bold',
     marginBottom: 55,
     lineHeight: 48,
     paddingHorizontal: 20,
@@ -119,7 +128,6 @@ const styles = StyleSheet.create({
   title2: {
     fontSize: 40,
     textAlign: 'center',
-    fontFamily: 'Lato_700Bold',
     marginBottom: 140,
     marginTop: 60,
     lineHeight: 48,
