@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image, StyleSheet ,Text } from 'react-native';
 import { useRouter } from 'expo-router';
 
 const SplashScreen = () => {
@@ -7,7 +7,7 @@ const SplashScreen = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push('/auth/login'); // Navigate to the onboarding screen after 3 seconds
+      router.push('/onboarding/options'); // Navigate to the onboarding screen after 3 seconds
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -19,6 +19,11 @@ const SplashScreen = () => {
         source={require('../assets/images/logo.png')}
         style={styles.image}
       />
+      <Text varient='h5' fontFamily='Medium' style={{paddingTop:20} } >
+
+        Made in 🇮🇳 
+       
+      </Text>
     </View>
   );
 };
@@ -34,6 +39,9 @@ const styles = StyleSheet.create({
     width: 273,
     height: 273,
   },
+  text:{
+    paddingTop:20
+  }
 });
 
 export default SplashScreen;
