@@ -18,11 +18,17 @@ const initialState = {
                     ...state,
                     loading: false
                 };
+                
         case ActionType.LOGIN_USER:
             return {
                 ...state,
                 isAuth: true
             };
+            case ActionType.REGISTER_USER:
+                return {
+                    ...state,
+                    isAuth: true
+                };
             case ActionType.LOGOUT_USER:
                 return {
                     ...state,

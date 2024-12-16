@@ -23,6 +23,7 @@ export const loginAction = (email, password) => (dispatch) => {
         });
         dispatch({ type: ActionType.LOADING_END });
         Toast.success("Login successfully!");
+        return true;
     })
     .catch(err => {
         dispatch({ type: ActionType.LOADING_END });
@@ -31,6 +32,57 @@ export const loginAction = (email, password) => (dispatch) => {
             return Toast.error(`Login failed: ${err.response.data.message || "Bad Request"}`);
         }
         Toast.error("Unexpected error occurred!");
+        return false;
+    });
+};
+
+export const registerAction = (
+    first_name,
+    last_name,
+    email,
+    phone,
+    password,
+    confirm_password,
+    gender,
+    dob,
+    country_code,
+    refer_by_code
+) => (dispatch) => {
+    dispatch({ type: ActionType.LOADING_START });
+    console.log("Payload:", { emailorphone: email, password }); // Debugging payload
+    axios.post(
+        `https://gsn-api.notebrains.com/api/signup`,
+        {   first_name,
+            last_name,
+            email,
+            phone,
+            password,
+            confirm_password,
+            gender,
+            dob,
+            country_code,
+            refer_by_code}, // Correct key as per Postman
+        { headers: { 'Content-Type': 'application/json' } } // Ensure headers match backend requirements
+    )
+    .then(res => {
+        console.log(res.status, "res.status in signup");
+        if(res.status == 201 && res.data["error"] == 0){        dispatch({ type: ActionType.LOADING_END });
+        Toast.success("Register successfully!");
+        return true;
+    }else{
+        Toast.error(res.data["message"]);
+        return false;
+    }
+
+    })
+    .catch(err => {
+        dispatch({ type: ActionType.LOADING_END });
+        console.error("Error details:", err.response ? err.response.data : err.message);
+        if (err.response && err.response.status === 400) {
+            return Toast.error(`Login failed: ${err.response.data.message || "Bad Request"}`);
+        }
+        Toast.error("Unexpected error occurred!");
+        return false;
     });
 };
 

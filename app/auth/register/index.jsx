@@ -1,4 +1,5 @@
 import React, { useState, useRef,useEffect } from 'react';
+import { useDispatch,useSelector } from 'react-redux';
 import {
   View,
   Text,
@@ -15,9 +16,12 @@ import googleLogo from '../../../assets/images/google.png';
 import RNPickerSelect from 'react-native-picker-select';
 import CountryPicker from 'react-native-country-picker-modal';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
+import { registerAction } from '../../store/actions/authActions';
 
 
 export default function RegisterScreen() {
+  const { loading } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
     const [isPasswordVisible, setPasswordVisible] = useState(false);
     const [firstname, setFirstname] = useState("");
     const [lastname,  setLastname] = useState("");
@@ -36,7 +40,7 @@ export default function RegisterScreen() {
 
     const [countries, setCountries] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState(null);
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
 
     const [countryCode, setCountryCode] = useState('IN'); // Default to India
     const [callingCode, setCallingCode] = useState('91'); // Default to India's code
@@ -70,9 +74,16 @@ export default function RegisterScreen() {
         fetchCountries();
       }, []);
     
-    //   if (loading) {
-    //     return <ActivityIndicator size="large" color="#0000ff" />;
-    //   }
+      const handleEmailRegister = async() => {
+        console.log(`Performing handleEmailRegister() in /app/auth/register/index.jsx with ${email} & ${password}`);
+      
+        if(!email || !password){
+          Toast.warn("Please give email and password!");
+          return;
+        }
+        dispatch(registerAction(email, password));
+    
+      }
   
   
     const secondNameRef = useRef(null);
@@ -384,14 +395,20 @@ export default function RegisterScreen() {
 
         
         
-        <LinearGradient
-          colors={isFormValid ? ['#006BE5', '#4A0AB4'] : ['#cacaca', '#cacaca']}
-          start={{ x: 0, y: 0 }} 
-          end={{ x: 1, y: 0 }}
-          style={styles.signInButton}
-        >
-          <Text style={styles.signInText}>Sign up</Text>
-        </LinearGradient>
+   <TouchableOpacity onPress={() => handleEmailRegister()} disabled={loading}>
+    <LinearGradient
+      colors={isFormValid ? ['#006BE5', '#4A0AB4'] : ['#cacaca', '#cacaca']}
+      start={{ x: 0, y: 0 }} 
+      end={{ x: 1, y: 0 }}
+      style={styles.signInButton}
+    >
+      {loading ? (
+        <ActivityIndicator size="small" color="skyblue" />
+      ) : (
+        <Text style={styles.signInText}>Sign up</Text>
+      )}
+    </LinearGradient>
+  </TouchableOpacity>
         <View
       style={{
         flexDirection: 'row',
