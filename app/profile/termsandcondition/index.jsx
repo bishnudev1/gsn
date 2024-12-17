@@ -6,7 +6,9 @@ import { Ionicons } from '@expo/vector-icons';
 const TermsandCondition = () => {
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <View style={[styles.header,{
+        marginTop:50
+      }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
@@ -49,8 +51,8 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       paddingVertical: 16,
       paddingHorizontal: 16,
-      borderBottomWidth: 1,
-      borderBottomColor: '#ddd',
+      // borderBottomWidth: 1,
+      // borderBottomColor: '#ddd',
     },
     headerTitle: {
       fontSize: 20,

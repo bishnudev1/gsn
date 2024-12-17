@@ -11,7 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 
-export default function App() {
+export default function AddNewAddress() {
   const [nameAddress, setNameAddress] = useState("Apartment");
   const [addressDetails, setAddressDetails] = useState(
     "931 Indian Summer Drive Taylor, MI 48180"

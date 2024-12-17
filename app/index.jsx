@@ -7,7 +7,7 @@ const SplashScreen = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      router.push('/onboarding/options'); // Navigate to the onboarding screen after 3 seconds
+      router.push('/profile/addnewaddress'); // Navigate to the onboarding screen after 3 seconds
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -19,11 +19,11 @@ const SplashScreen = () => {
         source={require('../assets/images/logo.png')}
         style={styles.image}
       />
-      <Text varient='h5' fontFamily='Medium' style={{paddingTop:20} } >
+      {/* <Text varient='h5' fontFamily='Medium' style={{paddingTop:20} } >
 
         Made in 🇮🇳 
        
-      </Text>
+      </Text> */}
     </View>
   );
 };
