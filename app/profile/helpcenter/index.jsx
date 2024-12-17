@@ -2,257 +2,246 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  StyleSheet,
-  TextInput,
   TouchableOpacity,
-  ScrollView,
+  StyleSheet,
+  FlatList,
+  TextInput,
+  Dimensions,
 } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 
-const HelpCenter = () => {
+const { width } = Dimensions.get("window");
+
+export default function HelpCenter() {
   const [activeTab, setActiveTab] = useState("FAQ");
-  const [activeSubTab, setActiveSubTab] = useState("General");
-  const [selected, setSelected] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("General");
+  const [expandedQuestion, setExpandedQuestion] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // FAQ Data
   const faqData = [
     {
-      id: 1,
-      question: "What is app?",
+      id: "1",
+      question: "What is the app?",
       answer:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     },
-    {
-      id: 2,
-      question: "How to use app?",
-      answer: "Step-by-step guide to using the app efficiently.",
-    },
-    {
-      id: 3,
-      question: "How do I cancel?",
-      answer: "You can cancel your subscription via the settings page.",
-    },
-    {
-      id: 4,
-      question: "Is app free to use?",
-      answer: "Yes, the app offers free features with optional premium plans.",
-    },
-    {
-      id: 5,
-      question: "How to add on app?",
-      answer: "You can add features via the 'Add Features' section in the app.",
-    },
+    { id: "2", question: "How to use the app?", answer: "To use the app, sign up and follow the tutorial." },
+    { id: "3", question: "How do I cancel?", answer: "Go to settings > account > cancel subscription." },
+    { id: "4", question: "Is the app free to use?", answer: "Yes, the app offers a free tier for all users." },
+    { id: "5", question: "How to add on the app?", answer: "Navigate to 'Add-ons' in the settings menu." },
   ];
 
-  // Contact Us Data
-  const contactData = {
-    phone: "+1 234 567 890",
-    email: "support@example.com",
-    address: "123 Help Center St, Tech City, TX 12345",
+  const categories = ["General", "Account", "Service", "Payment"];
+
+  const toggleExpand = (id) => {
+    setExpandedQuestion(expandedQuestion === id ? null : id);
   };
 
-  // Toggle FAQ dropdown
-  const toggleSelection = (id) => {
-    setSelected(selected === id ? null : id);
+  const handleSearch = (text) => {
+    setSearchQuery(text);
   };
+
+  const filteredFaqData = faqData.filter((item) =>
+    item.question.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const renderFAQItem = ({ item }) => (
+    <View style={styles.faqItem}>
+      <TouchableOpacity
+        style={styles.questionContainer}
+        onPress={() => toggleExpand(item.id)}
+      >
+        <Text style={styles.question}>{item.question}</Text>
+        <FontAwesome
+          name={expandedQuestion === item.id ? "chevron-up" : "chevron-down"}
+          size={16}
+          color="#007BFF"
+        />
+      </TouchableOpacity>
+      {expandedQuestion === item.id && (
+        <Text style={styles.answer}>{item.answer}</Text>
+      )}
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Back Arrow and Title */}
       <View style={styles.header}>
-        <Text style={styles.backArrow}>←</Text>
-        <Text style={styles.headerTitle}>Help Center</Text>
+        <TouchableOpacity>
+          <FontAwesome name="arrow-left" size={20} color="#333" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Help Center</Text>
       </View>
 
-      {/* Main Tabs */}
-      <View style={styles.mainTabs}>
-        {["FAQ", "Contact Us"].map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            style={[
-              styles.mainTab,
-              activeTab === tab && styles.activeMainTab,
-            ]}
-            onPress={() => setActiveTab(tab)}
+      {/* Tab Section */}
+      <View style={styles.tabContainer}>
+        <TouchableOpacity
+          style={[styles.tabButton, activeTab === "FAQ" && styles.activeTab]}
+          onPress={() => setActiveTab("FAQ")}
+        >
+          <Text
+            style={[styles.tabText, activeTab === "FAQ" && styles.activeTabText]}
           >
-            <Text
-              style={[
-                styles.mainTabText,
-                activeTab === tab && styles.activeMainTabText,
-              ]}
-            >
-              {tab}
-            </Text>
-          </TouchableOpacity>
-        ))}
+            FAQ
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tabButton, activeTab === "Contact Us" && styles.activeTab]}
+          onPress={() => setActiveTab("Contact Us")}
+        >
+          <Text
+            style={[styles.tabText, activeTab === "Contact Us" && styles.activeTabText]}
+          >
+            Contact Us
+          </Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Content Area */}
+     
+      
+
+      {/* Category Buttons */}
       {activeTab === "FAQ" && (
-        <>
-          {/* Sub-Tabs */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.subTabsContainer}
-          >
-            {["General", "Account", "Service", "Payment"].map((section) => (
-              <TouchableOpacity
-                key={section}
+        <View style={styles.categoryContainer}>
+          {categories.map((category) => (
+            <TouchableOpacity
+              key={category}
+              style={[
+                styles.categoryButton,
+                selectedCategory === category && styles.activeCategory,
+              ]}
+              onPress={() => setSelectedCategory(category)}
+            >
+              <Text
                 style={[
-                  styles.subTab,
-                  activeSubTab === section && styles.activeSubTab,
+                  styles.categoryText,
+                  selectedCategory === category && styles.activeCategoryText,
                 ]}
-                onPress={() => setActiveSubTab(section)}
               >
-                <Text
-                  style={[
-                    styles.subTabText,
-                    activeSubTab === section && styles.activeSubTabText,
-                  ]}
-                >
-                  {section}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          {/* Search Bar */}
-          <TextInput placeholder="Search" style={styles.searchBar} />
-
-          {/* FAQ List */}
-          <ScrollView style={styles.faqList}>
-            {activeSubTab === "General" &&
-              faqData.map((item) => (
-                <View key={item.id} style={styles.faqContainer}>
-                  <TouchableOpacity
-                    onPress={() => toggleSelection(item.id)}
-                    style={styles.questionContainer}
-                  >
-                    <Text style={styles.question}>{item.question}</Text>
-                    <Text style={styles.arrow}>
-                      {selected === item.id ? "▲" : "▼"}
-                    </Text>
-                  </TouchableOpacity>
-                  {selected === item.id && (
-                    <Text style={styles.answer}>{item.answer}</Text>
-                  )}
-                </View>
-              ))}
-            {activeSubTab !== "General" && (
-              <Text style={styles.placeholderText}>
-                {activeSubTab} FAQs will appear here.
+                {category}
               </Text>
-            )}
-          </ScrollView>
-        </>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+ {/* Search Bar */}
+ 
+  {activeTab === "FAQ" && (
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search FAQs..."
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+      )}
+
+    
+      {/* FAQ Section */}
+      {activeTab === "FAQ" && (
+        <FlatList
+          data={filteredFaqData}
+          renderItem={renderFAQItem}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          style={styles.faqList}
+        />
       )}
 
       {/* Contact Us Section */}
       {activeTab === "Contact Us" && (
         <View style={styles.contactContainer}>
-          <Text style={styles.contactTitle}>Get in Touch</Text>
-          <Text style={styles.contactInfo}>
-            📞 Phone: {contactData.phone}
-          </Text>
-          <Text style={styles.contactInfo}>
-            📧 Email: {contactData.email}
-          </Text>
-          <Text style={styles.contactInfo}>
-            🏠 Address: {contactData.address}
-          </Text>
+          <Text style={styles.contactInfo}>📞 Customer Service</Text>
+          <Text style={styles.contactInfo}>📧 Email</Text>
+          <Text style={styles.contactInfo}>🏠 www.example.com</Text>
         </View>
       )}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F9FAFC",
+    backgroundColor: "#fff",
+    paddingTop: 50,
+    paddingHorizontal: 20,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    padding: 20,
-    backgroundColor: "white",
-    elevation: 3,
+    marginBottom: 10,
   },
-  backArrow: {
-    fontSize: 24,
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
     color: "#333",
-    marginRight: 10,
+    marginLeft: 10,
   },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: "#333",
-  },
-  mainTabs: {
+  tabContainer: {
     flexDirection: "row",
-    justifyContent: "center",
-    marginVertical: 10,
+    justifyContent: "space-around",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    marginBottom: 10,
   },
-  mainTab: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
+  tabButton: {
+    paddingBottom: 10,
+  },
+  activeTab: {
     borderBottomWidth: 2,
-    borderColor: "transparent",
+    borderBottomColor: "#007BFF",
   },
-  activeMainTab: {
-    borderColor: "#007AFF",
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-  },
-  mainTabText: {
-    fontSize: 18,
+  tabText: {
+    fontSize: 16,
     color: "#777",
   },
-  activeMainTabText: {
-    color: "#007AFF",
-    fontWeight: "600",
+  activeTabText: {
+    color: "#007BFF",
+    fontWeight: "bold",
   },
-  subTabsContainer: {
-    backgroundColor: "white",
-    paddingVertical: 10,
-  },
-  subTab: {
-    borderRadius: 20,
+  searchInput: {
+    height: 40,
+    borderColor: "#ddd",
     borderWidth: 1,
-    borderColor: "#007AFF",
-    
-    paddingHorizontal: 16,
+    borderRadius: 20,
+    paddingLeft: 10,
+    marginBottom: 10,
+  },
+  categoryContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 10,
+  },
+  categoryButton: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#007BFF",
+    borderRadius: 20,
     marginHorizontal: 5,
   },
-  activeSubTab: {
-    backgroundColor: "#007AFF",
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-   
+  activeCategory: {
+    backgroundColor: "#007BFF",
   },
-  subTabText: {
-    color: "#007AFF",
-    fontWeight: "600",
+  categoryText: {
+    color: "#007BFF",
+    fontSize: 14,
   },
-  activeSubTabText: {
-    color: "white",
-    fontWeight: "600",
-  },
-  searchBar: {
-    margin: 15,
-    padding: 10,
-    backgroundColor: "#ECEFF1",
-    borderRadius: 8,
-    fontSize: 16,
+  activeCategoryText: {
+    color: "#fff",
   },
   faqList: {
-    marginHorizontal: 15,
+    marginTop: 10,
+    marginBottom: 20,
+    
   },
-  faqContainer: {
-    backgroundColor: "white",
+  faqItem: {
+    backgroundColor: "#FFFFFF",
     borderRadius: 10,
-    marginBottom: 10,
     padding: 15,
+    marginVertical: 5,
     elevation: 2,
   },
   questionContainer: {
@@ -261,46 +250,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   question: {
+    fontWeight: "bold",
     fontSize: 16,
-    fontWeight: "500",
     color: "#333",
-  },
-  arrow: {
-    fontSize: 18,
-    color: "#007AFF",
   },
   answer: {
     marginTop: 10,
-    color: "#555",
     fontSize: 14,
-  },
-  placeholderText: {
-    textAlign: "center",
-    marginTop: 20,
-    color: "#777",
-    fontSize: 16,
+    color: "#555",
   },
   contactContainer: {
-    padding: 20,
-    backgroundColor: "white",
-    margin: 15,
-    borderRadius: 10,
-    elevation: 3,
-  },
-  contactTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 10,
-    color: "#007AFF",
-    textAlign: "center",
+    marginTop: 20,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 12,
+    padding: 15,
+    elevation: 1,
   },
   contactInfo: {
     fontSize: 16,
-    marginVertical: 5,
+    marginBottom: 10,
     color: "#555",
+    fontWeight: "900",
+    paddingBottom: 30,
+    
   },
 });
-
-export default function App() {
-  return <HelpCenter />;
-}
+ 

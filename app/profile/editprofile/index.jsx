@@ -1,170 +1,139 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import * as ImagePicker from "expo-image-picker";
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { MaterialCommunityIcons, FontAwesome5, FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-export default function FillProfileScreen() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [gender, setGender] = useState("Male");
-  const [country, setCountry] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [birthDate, setBirthDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
-
-  // Pick Image Function
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setProfileImage(result.assets[0].uri);
-    }
-  };
+export default function ProfileScreen() {
+  const navigation = useNavigation(); // Hook for navigation
+  const [gender, setGender] = useState('Male');
+  const [country, setCountry] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [isConfirmVisible, setConfirmVisible] = useState(false);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Fill Your Profile</Text>
+      {/* Back Arrow */}
+      <TouchableOpacity style={styles.backArrow} onPress={() => navigation.goBack()}>
+        <FontAwesome name="arrow-left" size={24} color="#333" />
+        <Text style={styles.header}>Fill Your Profile</Text>
+      </TouchableOpacity>
+
+      {/* Header */}
+     
 
       {/* Profile Image */}
-      <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
-        {profileImage ? (
-          <Image source={{ uri: profileImage }} style={styles.image} />
-        ) : (
-          <Image
-            source={require("../../../assets/images/Ellipse.png")}
-            style={styles.image}
-          />
-        )}
-        <View style={styles.editIcon}>
-          <Text style={styles.editText}>✏️</Text>
-        </View>
-      </TouchableOpacity>
-
-      {/* Form Fields */}
-      <TextInput
-        placeholder="First Name"
-        style={styles.input}
-        value={firstName}
-        onChangeText={setFirstName}
-      />
-
-      <TextInput
-        placeholder="Last Name"
-        style={styles.input}
-        value={lastName}
-        onChangeText={setLastName}
-      />
-
-      <TextInput
-        placeholder="Email"
-        style={styles.input}
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-
-      <View style={styles.phoneContainer}>
-        <Text style={styles.countryCode}>+91</Text>
-        <TextInput
-          placeholder="Phone Number"
-          style={[styles.input, styles.phoneInput]}
-          keyboardType="phone-pad"
-          value={phoneNumber}
-          onChangeText={setPhoneNumber}
+      <View style={styles.profileContainer}>
+        <Image
+         source={require('../../../assets/images/Ellipse.png')} // Local profile image
+          style={styles.profileImage}
         />
+        <TouchableOpacity style={styles.editIcon}>
+          <FontAwesome name="pencil" size={18} color="#fff" />
+        </TouchableOpacity>
       </View>
 
-      {/* Date Picker */}
-      <TouchableOpacity
-        style={styles.datePicker}
-        onPress={() => setShowDatePicker(true)}
-      >
-        <Text>{birthDate.toDateString()}</Text>
-      </TouchableOpacity>
-      {showDatePicker && (
-        <DateTimePicker
-          value={birthDate}
-          mode="date"
-          display="default"
-          onChange={(event, date) => {
-            setShowDatePicker(false);
-            if (date) setBirthDate(date);
-          }}
-        />
-      )}
+      {/* Input Fields */}
+      <View style={styles.inputContainer}>
+        <FontAwesome name="user" size={20} color="#666" />
+        <TextInput style={styles.input} placeholder="First Name" />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <FontAwesome name="user" size={20} color="#666" />
+        <TextInput style={styles.input} placeholder="Last Name" />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <MaterialCommunityIcons name="email-outline" size={20} color="#666" />
+        <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" />
+      </View>
+
+      {/* Phone Number */}
+      <View style={styles.inputContainer}>
+        <FontAwesome name="phone" size={20} color="#666" />
+        <Text style={styles.phoneCode}>+91</Text>
+        <TextInput style={styles.phoneInput} placeholder="Phone Number" keyboardType="phone-pad" />
+      </View>
+
+      {/* Date of Birth */}
+      <View style={styles.inputContainer}>
+        <FontAwesome5 name="calendar-alt" size={20} color="#666" />
+        <TextInput style={styles.input} placeholder="12/27/1995" keyboardType="numeric" />
+      </View>
 
       {/* Gender Selection */}
-      <View style={styles.radioContainer}>
-        <TouchableOpacity onPress={() => setGender("Male")} style={styles.radio}>
-          <View style={gender === "Male" ? styles.radioSelected : styles.radioUnselected} />
-          <Text>Male</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setGender("Female")} style={styles.radio}>
-          <View style={gender === "Female" ? styles.radioSelected : styles.radioUnselected} />
-          <Text>Female</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setGender("Other")} style={styles.radio}>
-          <View style={gender === "Other" ? styles.radioSelected : styles.radioUnselected} />
-          <Text>Other</Text>
-        </TouchableOpacity>
+      <View style={styles.genderContainer}>
+        {['Male', 'Female', 'Other'].map((item) => (
+          <TouchableOpacity
+            key={item}
+            style={[styles.genderButton, gender === item && styles.selectedGender]}
+            onPress={() => setGender(item)}
+          >
+            <View style={styles.radio}>
+              {gender === item && <View style={styles.radioSelected} />}
+            </View>
+            <Text style={styles.genderText}>{item}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       {/* Country Picker */}
-      <Picker
-        selectedValue={country}
-        onValueChange={(itemValue) => setCountry(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Choose country" value="" />
-        <Picker.Item label="India" value="India" />
-        <Picker.Item label="USA" value="USA" />
-        <Picker.Item label="UK" value="UK" />
-      </Picker>
+      <View style={styles.inputContainer}>
+        <FontAwesome name="globe" size={20} color="#666" />
+        <Picker
+          selectedValue={country}
+          onValueChange={(itemValue) => setCountry(itemValue)}
+          style={styles.picker}
+        >
+          <Picker.Item label="Choose country" value="" />
+          <Picker.Item label="India" value="India" />
+          <Picker.Item label="USA" value="USA" />
+        </Picker>
+      </View>
 
-      {/* Password */}
-      <TextInput
-        placeholder="Password"
-        style={styles.input}
-        secureTextEntry={true}
-        value={password}
-        onChangeText={setPassword}
-      />
-      <TextInput
-        placeholder="Confirm Password"
-        style={styles.input}
-        secureTextEntry={true}
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-      />
+      {/* Password Fields */}
+      <View style={styles.inputContainer}>
+        <FontAwesome name="lock" size={20} color="#666" />
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Password"
+          secureTextEntry={!isPasswordVisible}
+          value={password}
+          onChangeText={setPassword}
+        />
+        <TouchableOpacity onPress={() => setPasswordVisible(!isPasswordVisible)}>
+          <MaterialCommunityIcons
+            name={isPasswordVisible ? "eye-off-outline" : "eye-outline"}
+            size={20}
+            color="#666"
+          />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.inputContainer}>
+        <FontAwesome name="lock" size={20} color="#666" />
+        <TextInput
+          style={styles.passwordInput}
+          placeholder="Confirm Password"
+          secureTextEntry={!isConfirmVisible}
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+        <TouchableOpacity onPress={() => setConfirmVisible(!isConfirmVisible)}>
+          <MaterialCommunityIcons
+            name={isConfirmVisible ? "eye-off-outline" : "eye-outline"}
+            size={20}
+            color="#666"
+          />
+        </TouchableOpacity>
+      </View>
 
       {/* Continue Button */}
-      <TouchableOpacity
-        style={[
-          styles.button,
-          !(firstName && email && password && confirmPassword) &&
-            styles.buttonDisabled,
-        ]}
-        disabled={!(firstName && email && password && confirmPassword)}
-      >
-        <Text style={styles.buttonText}>Continue</Text>
+      <TouchableOpacity style={styles.continueButton}>
+        <Text style={styles.continueText}>Continue</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -172,106 +141,118 @@ export default function FillProfileScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    flexGrow: 1,
+    backgroundColor: '#fff',
     padding: 20,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginVertical: 10,
+  backArrow: {
+    marginBottom: 10,
+    alignSelf: 'flex-start',
+    marginTop:17,
+    flexDirection: 'row',
+   justifyContent: 'space-between',
+   
   },
-  imageContainer: {
-    position: "relative",
+  header: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    marginLeft: 10,
+    color: '#333',
+  },
+  profileContainer: {
+    position: 'relative',
+    alignSelf: 'center',
     marginBottom: 20,
   },
-  image: {
+  profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
   },
   editIcon: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
-    right: 0,
-    backgroundColor: "#3498db",
-    borderRadius: 20,
+    right: 10,
+    backgroundColor: '#007AFF',
+    borderRadius: 50,
     padding: 5,
   },
-  editText: {
-    color: "#fff",
-    fontSize: 12,
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
   input: {
-    width: "100%",
-    padding: 10,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    marginVertical: 8,
+    flex: 1,
+    height: 50,
+    marginLeft: 10,
   },
-  phoneContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  countryCode: {
-    marginRight: 10,
-    fontSize: 16,
+  phoneCode: {
+    marginLeft: 10,
+    marginRight: 5,
+    color: '#333',
   },
   phoneInput: {
     flex: 1,
+    height: 50,
   },
-  datePicker: {
-    width: "100%",
-    padding: 10,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 5,
-    marginVertical: 8,
+  genderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
-  radioContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    marginVertical: 8,
+  genderButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   radio: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  radioUnselected: {
-    width: 20,
-    height: 20,
-    borderColor: "#ccc",
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     borderWidth: 2,
-    borderRadius: 10,
+    borderColor: '#007AFF',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 5,
   },
   radioSelected: {
-    width: 20,
-    height: 20,
-    backgroundColor: "#3498db",
-    borderRadius: 10,
-    marginRight: 5,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#007AFF',
+  },
+  genderText: {
+    fontSize: 14,
+    color: '#333',
   },
   picker: {
-    width: "100%",
-    marginVertical: 8,
+    flex: 1,
+    height: 50,
   },
-  button: {
-    backgroundColor: "#3498db",
-    padding: 15,
-    borderRadius: 5,
-    alignItems: "center",
+  passwordInput: {
+    flex: 1,
+    height: 50,
+    marginLeft: 10,
+  },
+  continueButton: {
+    backgroundColor: '#ccc',
+    width: '100%',
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 100,
     marginTop: 10,
-    width: "100%",
   },
-  buttonDisabled: {
-    backgroundColor: "#ccc",
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+  continueText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
   },
 });
+
+
