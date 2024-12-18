@@ -17,8 +17,8 @@ export default function SportsSelectionScreen() {
   const [selectedHeight, setSelectedHeight] = useState(150);
 
   const sports = [
-    { id: 1, name: 'Male', icon: <MaterialIcons name="male" size={80} color={selectedSport === 1 ? '#fff' : '#0074f3'} /> },
-    { id: 2, name: 'Female', icon: <MaterialIcons name="female" size={80} color={selectedSport === 2 ? '#fff' : '#0074f3'} /> },
+    { id: 1, name: 'Male', icon: <MaterialIcons name="male" size={80} color={selectedSport === 1 ? '#fff' : 'black'} /> },
+    { id: 2, name: 'Female', icon: <MaterialIcons name="female" size={80} color={selectedSport === 2 ? '#fff' : 'black'} /> },
   ];
 
   const handleSportSelection = (id) => {
